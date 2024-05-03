@@ -1,6 +1,6 @@
 ## Questions and Answers
 
-### 01 What is the difference between Component and PureComponent? Give an example where it might break my app.
+### 01. What is the difference between Component and PureComponent? Give an example where it might break my app.
 
 Class-based components using the standard Components class will re-render by
 default regardless of whether the props and state has actually changed
@@ -57,3 +57,36 @@ Using class-based components are not a good practice anymore, you should use
 Functional components, we can also achieve the same results and with better
 performance. To keep this short, we can simply convert both classes to
 functional component and wrap the Child component with a `memo` hook.
+
+### 02. Context + shouldComponentUpdate might be dangerous. Why is that?
+
+It's easy to introduce bugs when using shouldComponentUpdate with context. When
+you introduce `shouldComponentUpdate` into components that consumes a context,
+you add another layer of complexity because you would need to ensure that your
+`shouldComponentUpdate` logic correctly handles changes in both props, states
+and context values.
+
+### 03. Describe 3 ways to pass information from a component to its Parent.
+
+You can use the following methods to pass data from a child component to it's
+parent component:
+
+- callback functions
+- Context API
+- External State management libs like Redux, Mobx
+
+### 04. Give 2 ways to prevent components from re-rendering.
+
+Re-rendering most of the times are fine because React is fast and it was
+designed to re-render by default. In fact, when you app doesn't re-render, it's
+either it's buggy or it's not an interactive app like static webpage without any
+CTA or interactions. You should not fall into pre-mature optimizations.
+
+That being said, you can prevent your components from re-rendering by:
+
+- memoize the components with `memo` hook
+- memoize expensive calculations with `useMemo` and expensive functions with
+  `useCallback`
+
+You can optimize components that are performance sensitive, components that
+renders large data sets, components with expensive computations, etc
