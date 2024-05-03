@@ -90,3 +90,67 @@ That being said, you can prevent your components from re-rendering by:
 
 You can optimize components that are performance sensitive, components that
 renders large data sets, components with expensive computations, etc
+
+### 05. What is a fragment and why do we need it? Give an example where it might break my app.
+
+Fragment is a React syntax that allows you to group elements without adding
+unnecessary extra nodes to the DOM. For example
+
+```javascript
+const MyComponent1 = () => {
+	return (
+		<React.Fragment>
+			<header>some items</header>
+			<button>Press me</button>
+		</React.Fragment>
+	);
+};
+
+// OR with the shorthand
+const MyComponent2 = () => {
+	return (
+		<>
+			<header>some items</header>
+			<button>Press me</button>
+		</>
+	);
+};
+```
+
+React fragment was actually added in version 16.2 and with the
+`<Fragment></Fragment>` syntax, if you try using the shortcut `<></>`, it will
+break your app.
+
+Fragments can also cause unintended styling issue
+
+```javascript
+const MyComponent1 = () => {
+	return (
+		<React.Fragment>
+			<p>some items1</p>
+			<p>some items2</p>
+			<p>some items3</p>
+		</React.Fragment>
+	);
+};
+
+// OR with the shorthand
+const MyComponent2 = () => {
+	return (
+		<div
+			style={{
+				display: 'flex',
+				justifyContent: 'space-between',
+			}}
+		>
+			<header>some items</header>
+
+			<MyComponent1 />
+		</div>
+	);
+};
+```
+
+In the above example, you might have intended that `<MyComponent1 />` is grouped
+as one, but because there was no wrapper, `space-between` will apply to all the
+items.
