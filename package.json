@@ -1,13 +1,24 @@
 {
 	"name": "auto-complete",
 	"private": true,
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"type": "module",
+	"engines": {
+		"node": "18.x.x",
+		"npm": "9.x.x",
+		"yarn": "1.x.x"
+	},
+	"volta": {
+		"node": "18.12.1",
+		"npm": "9.8.1",
+		"yarn": "1.22.19"
+	},
 	"scripts": {
-		"dev": "vite --port 3005",
-		"build": "tsc && vite build",
-		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-		"preview": "vite preview"
+		"dev": "yarn node-engine-check && vite --port 3005",
+		"build": "yarn node-engine-check && tsc && vite build",
+		"lint": "yarn node-engine-check && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+		"preview": "yarn node-engine-check && vite preview",
+		"node-engine-check": "npx check-engine"
 	},
 	"dependencies": {
 		"react": "^18.2.0",
