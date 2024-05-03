@@ -26,7 +26,7 @@ export const useAutocomplete = ({
 
 	const ref = useClickOutside(() => setOpen(false));
 
-	const [data, setData, error] = useFetchData<AutocompleteItem>({
+	const { data, setData, loading, error } = useFetchData<AutocompleteItem>({
 		dataSource,
 		query,
 		formatData,
@@ -99,6 +99,7 @@ export const useAutocomplete = ({
 	return {
 		data,
 		error,
+		loading,
 		open,
 		ref,
 		activeIndex,

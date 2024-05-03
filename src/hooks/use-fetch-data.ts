@@ -27,22 +27,29 @@ export const useFetchData = <T>({
 }: UseFetchDataType<T>) => {
 	const [data, setData] = useState<T[] | null>(null);
 	const [error, setError] = useState<string | null>('');
+	const [loading, setLoading] = useState(false);
 
 	const debounce = useDebounce();
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const fetchData = useCallback(
 		debounce(async (query, signal) => {
+			setLoading(true);
 			const cache = getDataCache<T[]>(cacheKey);
 
 			if (cache[query]?.length > 0) {
 				setData(cache[query]);
+				setLoading(false);
+				setError(null);
+
 				return;
 			}
 
 			if (query === '') {
 				const recentQueries = fetchRecentQueries<T[]>(cacheKey);
 				setData(recentQueries);
+				setLoading(false);
+				setError(null);
 
 				return;
 			}
@@ -61,6 +68,8 @@ export const useFetchData = <T>({
 			} catch (e) {
 				if (!signal.aborted && e instanceof Error) setError(e.message);
 				console.log(e);
+			} finally {
+				setLoading(false);
 			}
 		}, delay),
 		[]
@@ -77,5 +86,5 @@ export const useFetchData = <T>({
 		};
 	}, [query, formatData, fetchData]);
 
-	return [data, setData, error] as const;
+	return { data, setData, loading, error };
 };

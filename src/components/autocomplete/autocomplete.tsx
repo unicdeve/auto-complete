@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
-import './autocomplete.styles.css';
 import { useAutocomplete } from '../../hooks';
+import { CircularLoading } from '../circular-loading';
+import './autocomplete.styles.css';
 
 export type AutocompleteItem = {
 	label: string;
@@ -17,8 +18,11 @@ type AutocompleteProps = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	formatData: (data: any) => AutocompleteItem[];
 	debounceDelay?: number;
-	inputClassname?: string;
-	labelClassname?: string;
+	classNames?: {
+		wrapperClass?: string;
+		inputClass?: string;
+		labelClass?: string;
+	};
 	dataSource: {
 		getUrl: (query: string) => string;
 	};
@@ -31,8 +35,7 @@ export const Autocomplete = ({
 	id,
 	label,
 	placeholder,
-	inputClassname,
-	labelClassname,
+	classNames,
 	formatData,
 	debounceDelay = 300,
 	dataSource,
@@ -42,13 +45,13 @@ export const Autocomplete = ({
 	const {
 		data,
 		error,
+		loading,
 		open,
 		ref,
 		activeIndex,
 		query,
 		onItemSelect,
 		handleChange,
-		handleBlur,
 		handleFocus,
 		handleKeyUp,
 	} = useAutocomplete({
@@ -103,7 +106,9 @@ export const Autocomplete = ({
 						<li
 							className={`unicdev-suggestion-item ${isActive}`}
 							key={index}
-							onClick={() => onItemSelect(data)}
+							onClick={() => {
+								onItemSelect(data);
+							}}
 						>
 							{parts.map((part, i) => {
 								if (part.toLowerCase() === query.toLowerCase())
@@ -125,27 +130,33 @@ export const Autocomplete = ({
 	};
 
 	return (
-		<div className='unicdev-auto' ref={ref}>
-			<label className={`unicdev-auto-label ${labelClassname}`} htmlFor={name}>
+		<div className={`unicdev-auto ${classNames?.wrapperClass}`} ref={ref}>
+			<label
+				className={`unicdev-auto-label ${classNames?.labelClass}`}
+				htmlFor={name}
+			>
 				{label}
 			</label>
 
 			<div className='unicdev-auto-input-wrapper'>
 				<input
 					name={name}
-					className={`unicdev-auto-input ${inputClassname}`}
+					className={`unicdev-auto-input ${classNames?.inputClass}`}
 					id={id}
 					value={query}
 					onChange={handleChange}
 					onFocus={handleFocus}
-					onBlur={handleBlur}
 					placeholder={placeholder}
 					autoComplete='off'
 					onKeyUp={handleKeyUp}
 				/>
 
-				{open ? renderSuggestions() : null}
+				<div className='unicdev-circular-loading'>
+					{loading && <CircularLoading />}
+				</div>
 			</div>
+
+			{open ? renderSuggestions() : null}
 		</div>
 	);
 };
