@@ -116,13 +116,26 @@ export const Autocomplete = ({
 					if (activeIndex !== null && index === activeIndex)
 						isActive = 'unicdev-suggestion-active';
 
+					const parts = data.label.split(new RegExp(`(${query})`, 'gi'));
+
 					return (
 						<li
 							className={`unicdev-suggestion-item ${isActive}`}
 							key={index}
 							onClick={() => onItemSelect(data)}
 						>
-							{data.label}
+							{parts.map((part, i) => {
+								if (part.toLowerCase() === query.toLowerCase())
+									return (
+										<strong
+											key={i}
+											style={{ fontWeight: 'bold', color: '#000' }}
+										>
+											{part}
+										</strong>
+									);
+								else return part;
+							})}
 						</li>
 					);
 				})}
