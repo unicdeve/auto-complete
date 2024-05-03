@@ -154,3 +154,29 @@ const MyComponent2 = () => {
 In the above example, you might have intended that `<MyComponent1 />` is grouped
 as one, but because there was no wrapper, `space-between` will apply to all the
 items.
+
+### 06. Give 3 examples of the HOC pattern.
+
+Higher Order Component (HOC) is a common design pattern in React used to enhance
+components by adding additional functionalities. Examples includes:
+
+1. withRouter from React Router:
+
+```javascript
+const Avatar = ({ history }) => {
+	// Access router props
+	return (
+		<div onClick={() => history.push('/profile')}>
+			<img />
+		</div>
+	);
+};
+
+export default withRouter(Avatar);
+```
+
+This will add router props to <MyComponent />
+
+2. connect (from React redux): This is an HOC that injects redux states and
+   actions into a component.
+3. withStyles (from MUI)
