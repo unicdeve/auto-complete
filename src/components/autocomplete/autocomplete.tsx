@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import './autocomplete.styles.css';
+import { useFetchData } from '../../hooks/use-fetch-data';
 
 export type AutocompleteItem = {
 	label: string;
@@ -24,24 +25,14 @@ export const Autocomplete = ({
 	placeholder,
 	inputClassname,
 	labelClassname,
+	debounceDelay = 300,
 }: AutocompleteProps) => {
 	const [query, setQuery] = useState('');
 
-	const error = undefined;
-	const data = [
-		{
-			value: 'Taiwo',
-			label: 'Taiwo',
-		},
-		{
-			value: 'Kenny',
-			label: 'Kenny',
-		},
-		{
-			value: 'John',
-			label: 'John',
-		},
-	];
+	const [data, setData, error] = useFetchData<AutocompleteItem[]>({
+		query,
+		delay: debounceDelay,
+	});
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setQuery(event.target.value);
@@ -106,7 +97,7 @@ export const Autocomplete = ({
 					autoComplete='off'
 				/>
 
-				{data.length > 0 ? renderSuggestions() : null}
+				{data && data.length > 0 ? renderSuggestions() : null}
 			</div>
 		</div>
 	);
