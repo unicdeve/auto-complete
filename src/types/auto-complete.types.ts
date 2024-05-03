@@ -8,14 +8,19 @@ export type AutocompleteProps = {
 	id?: string;
 	label?: string;
 	placeholder?: string;
+	// data can be any type for now
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	formatData: (data: any) => AutocompleteItem[];
 	debounceDelay?: number;
-	inputClassname?: string;
-	labelClassname?: string;
-
-	dataSource: {
-		getUrl: (query: string) => string;
+	classNames?: {
+		wrapperClass?: string;
+		inputClass?: string;
+		labelClass?: string;
 	};
+	dataSource: {
+		getUrl: (query: string, limit?: number) => string;
+	};
+	maxItemsLimit?: number; // Limit the result from the backend
 	errorMessage?: React.JSX.Element;
 	noDataMessage?: React.JSX.Element;
 };

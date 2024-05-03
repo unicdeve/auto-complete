@@ -9,7 +9,7 @@ import {
 
 type UseAutocompleteType = Pick<
 	AutocompleteProps,
-	'dataSource' | 'formatData' | 'debounceDelay'
+	'dataSource' | 'formatData' | 'debounceDelay' | 'maxItemsLimit'
 > & {
 	cacheKey: string;
 };
@@ -19,6 +19,7 @@ export const useAutocomplete = ({
 	formatData,
 	debounceDelay = 300,
 	cacheKey,
+	maxItemsLimit = 50,
 }: UseAutocompleteType) => {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
@@ -31,10 +32,11 @@ export const useAutocomplete = ({
 		query,
 		formatData,
 		delay: debounceDelay,
+		cacheKey,
+		maxItemsLimit,
 		onComplete: () => {
 			setOpen(true);
 		},
-		cacheKey,
 	});
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,34 +1,8 @@
 'use client';
-import React from 'react';
+import { AutocompleteProps } from '@/types/auto-complete.types';
 import { useAutocomplete } from '../../hooks';
 import { CircularLoading } from '../circular-loading';
 import './autocomplete.styles.css';
-
-export type AutocompleteItem = {
-	label: string;
-	value: string;
-};
-
-type AutocompleteProps = {
-	name: string;
-	id?: string;
-	label?: string;
-	placeholder?: string;
-	// data can be any type for now
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	formatData: (data: any) => AutocompleteItem[];
-	debounceDelay?: number;
-	classNames?: {
-		wrapperClass?: string;
-		inputClass?: string;
-		labelClass?: string;
-	};
-	dataSource: {
-		getUrl: (query: string) => string;
-	};
-	errorMessage?: React.JSX.Element;
-	noDataMessage?: React.JSX.Element;
-};
 
 export const Autocomplete = ({
 	name,
@@ -41,6 +15,7 @@ export const Autocomplete = ({
 	dataSource,
 	errorMessage,
 	noDataMessage,
+	maxItemsLimit,
 }: AutocompleteProps) => {
 	const {
 		data,
@@ -59,6 +34,7 @@ export const Autocomplete = ({
 		debounceDelay,
 		formatData,
 		cacheKey: name,
+		maxItemsLimit,
 	});
 
 	const renderSuggestions = () => {

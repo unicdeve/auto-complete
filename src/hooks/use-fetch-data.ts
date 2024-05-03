@@ -5,16 +5,15 @@ import {
 	getDataCache,
 	updateDataCache,
 } from '../utils/cache';
+import { AutocompleteProps } from '@/types/auto-complete.types';
 
-type UseFetchDataType<T> = {
+type UseFetchDataType<T> = Pick<AutocompleteProps, 'dataSource'> & {
 	query: string;
 	formatData: (data: unknown) => T[];
 	onComplete?: (data?: T[]) => void;
 	delay: number;
-	dataSource: {
-		getUrl: (query: string) => string;
-	};
 	cacheKey: string;
+	maxItemsLimit: number;
 };
 
 export const useFetchData = <T>({
@@ -24,6 +23,7 @@ export const useFetchData = <T>({
 	onComplete,
 	dataSource,
 	cacheKey,
+	maxItemsLimit,
 }: UseFetchDataType<T>) => {
 	const [data, setData] = useState<T[] | null>(null);
 	const [error, setError] = useState<string | null>('');
@@ -55,11 +55,20 @@ export const useFetchData = <T>({
 			}
 
 			try {
-				const response = await fetch(dataSource.getUrl(query), { signal });
+				const response = await fetch(dataSource.getUrl(query, maxItemsLimit), {
+					signal,
+				});
 				if (!response.ok) throw new Error(response.statusText);
 
 				const data = await response.json();
 				const formattedData = formatData(data);
+
+				// Ideally, your BE should support pagination
+				// If the BE doesn't support pagination, make sure you are slicing the items on the FE
+				if (formattedData.length > maxItemsLimit) {
+					formattedData.slice(0, maxItemsLimit);
+				}
+
 				setData(formattedData);
 				onComplete?.(formattedData);
 
