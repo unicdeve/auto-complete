@@ -224,3 +224,36 @@ async function asyncFunction() {
 	}
 }
 ```
+
+### 08. How many arguments does setState take and why is it async.
+
+The setState in class-based components takes two arguments
+
+```javascript
+this.setState({ count: this.state.count + 1 }, () => {
+	console.log('State updated!');
+});
+```
+
+First argument is the new state object and the second argument is an optional
+callback function whic is call right after the state has been updated and the
+component has also re-rendered.
+
+Why the setState is async is because Javascript is single-threaded, React uses
+the event loop to schedule updates and re-rendering, this means that the UI
+doesn't have to freeze when the state is updating, instead React waits for the
+current execution thread to finish because applying the updates.
+
+### 09. List the steps needed to migrate a Class to Function Component.
+
+I have had to do this previous in some legacy codebase, here are my steps:
+
+- Break the component into smaller child functional components () if it's a
+  large component;
+- Convert state to useState hook;
+- Convert lifecycle methods to useEffect hook;
+- Remove constructor
+- Convert class methods to functions
+- Update props usage
+- Wrap component in memo if it's using PureComponent
+- Test and Debug
