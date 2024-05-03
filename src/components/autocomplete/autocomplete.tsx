@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './autocomplete.styles.css';
 import { useFetchData } from '../../hooks/use-fetch-data';
 import { useClickOutside } from '../../hooks/use-click-outside';
+import { fetchRecentQueries } from '../../utils/cache';
 
 export type AutocompleteItem = {
 	label: string;
@@ -63,6 +64,11 @@ export const Autocomplete = ({
 	};
 
 	const handleFocus = () => {
+		if (!query) {
+			const recentQueries = fetchRecentQueries<AutocompleteItem[]>();
+			setData(recentQueries);
+		}
+
 		setOpen(true);
 	};
 
