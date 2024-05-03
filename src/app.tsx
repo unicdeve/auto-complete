@@ -18,7 +18,7 @@ function App() {
 				padding: 40,
 			}}
 		>
-			<h1 className='text-4xl font-black'>Autocomplete</h1>
+			<h1>Autocomplete</h1>
 
 			<Autocomplete
 				label='Countries'
@@ -30,6 +30,10 @@ function App() {
 						`https://restcountries.com/v3.1/name/${query}?fields=name`,
 				}}
 			/>
+
+			<p>
+				More item to demostrate no layout shift when the suggestion list is open
+			</p>
 		</div>
 	);
 }
