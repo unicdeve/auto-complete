@@ -20,6 +20,9 @@ type AutocompleteProps = {
 	debounceDelay?: number;
 	inputClassname?: string;
 	labelClassname?: string;
+	dataSource: {
+		getUrl: (query: string) => string;
+	};
 };
 
 export const Autocomplete = ({

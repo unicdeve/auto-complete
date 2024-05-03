@@ -8,7 +8,7 @@
 
 .unicdev-auto-input-wrapper {
 	display: flex;
-	border: 1.5px solid #d1d5db;
+	border: 1px solid #9ca3af;
 	width: fit-content;
 	border-radius: 8px;
 	position: relative;
@@ -43,6 +43,9 @@
 	border-radius: 8px;
 	border: 1px solid #e5e7eb;
 	z-index: 1000;
+	max-height: 400px;
+	overflow-y: auto;
+	scrollbar-width: thin;
 }
 
 .unicdev-suggestion-item {

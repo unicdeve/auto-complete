@@ -21,10 +21,14 @@ function App() {
 			<h1 className='text-4xl font-black'>Auto complete component</h1>
 
 			<Autocomplete
-				label='Cities'
-				placeholder='Search for cities'
+				label='Countries'
+				placeholder='Search for countries'
 				name='fakeNames'
 				formatData={formatData}
+				dataSource={{
+					getUrl: (query) =>
+						`https://restcountries.com/v3.1/name/${query}?fields=name`,
+				}}
 			/>
 		</div>
 	);
