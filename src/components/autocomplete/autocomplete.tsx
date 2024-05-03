@@ -23,6 +23,8 @@ type AutocompleteProps = {
 	dataSource: {
 		getUrl: (query: string) => string;
 	};
+	errorMessage?: React.JSX.Element;
+	noDataMessage?: React.JSX.Element;
 };
 
 export const Autocomplete = ({
@@ -34,6 +36,8 @@ export const Autocomplete = ({
 	labelClassname,
 	formatData,
 	debounceDelay = 300,
+	errorMessage,
+	noDataMessage,
 }: AutocompleteProps) => {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
@@ -92,6 +96,11 @@ export const Autocomplete = ({
 
 	const renderSuggestions = () => {
 		if (error) {
+			if (errorMessage)
+				return (
+					<div className='unicdev-suggestion-container'>{errorMessage}</div>
+				);
+
 			return (
 				<ul className='unicdev-suggestion-container'>
 					<li className={`unicdev-suggestion-item unicdev-no-suggestion`}>
@@ -102,6 +111,11 @@ export const Autocomplete = ({
 		}
 
 		if (!data || (data && data.length === 0)) {
+			if (noDataMessage)
+				return (
+					<div className='unicdev-suggestion-container'>{noDataMessage}</div>
+				);
+
 			return (
 				<ul className='unicdev-suggestion-container'>
 					<li className={`unicdev-suggestion-item unicdev-no-suggestion`}>
