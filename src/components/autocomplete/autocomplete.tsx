@@ -56,6 +56,14 @@ export const Autocomplete = ({
 		setQuery(event.target.value);
 	};
 
+	const handleOnBlur = () => {
+		setOpen(false);
+	};
+
+	const handleFocus = () => {
+		setOpen(true);
+	};
+
 	const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		const key = event.key;
 		if (key === 'Escape') {
@@ -175,6 +183,8 @@ export const Autocomplete = ({
 					id={id}
 					value={query}
 					onChange={handleChange}
+					onFocus={handleFocus}
+					onBlur={handleOnBlur}
 					placeholder={placeholder}
 					autoComplete='off'
 					onKeyUp={handleKeyUp}
