@@ -1,9 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import './autocomplete.styles.css';
-import { useFetchData } from '../../hooks/use-fetch-data';
-import { useClickOutside } from '../../hooks/use-click-outside';
-import { fetchRecentQueries } from '../../utils/cache';
+import { useAutocomplete } from '../../hooks';
 
 export type AutocompleteItem = {
 	label: string;
@@ -41,74 +39,23 @@ export const Autocomplete = ({
 	errorMessage,
 	noDataMessage,
 }: AutocompleteProps) => {
-	const [open, setOpen] = useState(false);
-	const [query, setQuery] = useState('');
-	const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-	const [data, setData, error] = useFetchData<AutocompleteItem>({
-		dataSource,
+	const {
+		data,
+		error,
+		open,
+		ref,
+		activeIndex,
 		query,
+		onItemSelect,
+		handleChange,
+		handleBlur,
+		handleFocus,
+		handleKeyUp,
+	} = useAutocomplete({
+		dataSource,
+		debounceDelay,
 		formatData,
-		delay: debounceDelay,
-		onComplete: () => {
-			setOpen(true);
-		},
 	});
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setQuery(event.target.value);
-	};
-
-	const handleOnBlur = () => {
-		setOpen(false);
-	};
-
-	const handleFocus = () => {
-		if (!query) {
-			const recentQueries = fetchRecentQueries<AutocompleteItem[]>();
-			setData(recentQueries);
-		}
-
-		setOpen(true);
-	};
-
-	const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		const key = event.key;
-		if (key === 'Escape') {
-			setOpen(false);
-
-			return;
-		}
-
-		if (key === 'Enter') {
-			if (activeIndex === null) return;
-
-			data && setQuery(data[activeIndex].value);
-			setData(null);
-			setActiveIndex(null);
-
-			return;
-		}
-
-		const dataLenght = data?.length || 0;
-
-		if (!data || dataLenght === 0) return;
-
-		if (key === 'ArrowDown') {
-			if (activeIndex === null || activeIndex === dataLenght - 1) {
-				setActiveIndex(0);
-			} else {
-				setActiveIndex((prev) => (prev !== null ? prev + 1 : prev));
-			}
-		} else if (key === 'ArrowUp') {
-			if (activeIndex === 0) setActiveIndex(dataLenght - 1);
-			else setActiveIndex((prev) => (prev !== null ? prev - 1 : prev));
-		}
-	};
-
-	const onItemSelect = (item: AutocompleteItem) => {
-		setQuery(item.value);
-	};
 
 	const renderSuggestions = () => {
 		if (error) {
@@ -176,8 +123,6 @@ export const Autocomplete = ({
 		);
 	};
 
-	const ref = useClickOutside(() => setOpen(false));
-
 	return (
 		<div className='unicdev-auto' ref={ref}>
 			<label className={`unicdev-auto-label ${labelClassname}`} htmlFor={name}>
@@ -192,7 +137,7 @@ export const Autocomplete = ({
 					value={query}
 					onChange={handleChange}
 					onFocus={handleFocus}
-					onBlur={handleOnBlur}
+					onBlur={handleBlur}
 					placeholder={placeholder}
 					autoComplete='off'
 					onKeyUp={handleKeyUp}
