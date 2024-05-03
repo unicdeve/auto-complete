@@ -180,3 +180,47 @@ This will add router props to <MyComponent />
 2. connect (from React redux): This is an HOC that injects redux states and
    actions into a component.
 3. withStyles (from MUI)
+
+### 07. What's the difference in handling exceptions in promises, callbacks and async...await?
+
+- Promises: they have two main methods for handling success and failure: .then()
+  for success and .catch() for failure.
+
+```javascript
+promiseFunction()
+	.then((result) => {
+		// success
+	})
+	.catch((error) => {
+		// error
+	});
+```
+
+- Error handling in callbacks often involves checking if the first argument of
+  the callback contains an error object. If it does, the error is handled;
+  otherwise, the operation is considered successful.
+
+```javascript
+callbackFunction((error, result) => {
+	if (error) {
+		// error
+	} else {
+		// success
+	}
+});
+```
+
+- async...await: is a modern Javascript syntax (Syntatic Sugar). Error handling
+  is done using traditional try...catch blocks, providing a more natural and
+  synchronous-like error handling mechanism.
+
+```javascript
+async function asyncFunction() {
+	try {
+		const result = await apromiseFunc();
+		// success
+	} catch (error) {
+		// error
+	}
+}
+```
