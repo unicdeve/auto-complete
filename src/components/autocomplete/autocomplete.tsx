@@ -13,6 +13,9 @@ type AutocompleteProps = {
 	id?: string;
 	label?: string;
 	placeholder?: string;
+	// data can be any type for now
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	formatData: (data: any) => AutocompleteItem[];
 	debounceDelay?: number;
 	inputClassname?: string;
 	labelClassname?: string;
@@ -25,6 +28,7 @@ export const Autocomplete = ({
 	placeholder,
 	inputClassname,
 	labelClassname,
+	formatData,
 	debounceDelay = 300,
 }: AutocompleteProps) => {
 	const [open, setOpen] = useState(false);
@@ -33,6 +37,7 @@ export const Autocomplete = ({
 
 	const [data, setData, error] = useFetchData<AutocompleteItem[]>({
 		query,
+		formatData,
 		delay: debounceDelay,
 		onComplete: () => {
 			setOpen(true);

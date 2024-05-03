@@ -1,43 +1,45 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useDebounce } from './use-dounce';
 
 type UseFetchDataType<T> = {
 	query: string;
-	delay: number;
+	formatData: (data: unknown) => T;
 	onComplete?: (data?: T) => void;
+	delay: number;
 };
 
-function mockDelay(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-const mockData: any[] = [
-	{
-		value: 'Taiwo',
-		label: 'Taiwo',
-	},
-	{
-		value: 'Kenny',
-		label: 'Kenny',
-	},
-	{
-		value: 'John',
-		label: 'John',
-	},
-];
-
 export const useFetchData = <T>({
-	delay,
 	query,
+	formatData,
+	delay,
 	onComplete,
 }: UseFetchDataType<T>) => {
 	const [data, setData] = useState<T | null>(null);
 	const [error, setError] = useState<string | null>('');
 
-	const fetchData = useCallback(async () => {
-		await mockDelay(delay);
-		setData(mockData);
-		onComplete?.(mockData);
-	}, [delay]);
+	const debounce = useDebounce();
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const fetchData = useCallback(
+		debounce(async (query: string, signal: AbortSignal) => {
+			try {
+				// TODO: make this dynamic
+				const response = await fetch(
+					`https://restcountries.com/v3.1/name/${query}?fields=name`,
+					{ signal }
+				);
+				if (!response.ok) throw new Error(response.statusText);
+
+				const data = await response.json();
+				const formattedData = formatData(data);
+				setData(formattedData);
+				onComplete?.(formattedData);
+			} catch (e) {
+				if (!signal.aborted && e instanceof Error) setError(e.message);
+			}
+		}, delay),
+		[]
+	);
 
 	useEffect(() => {
 		if (!query) {
@@ -47,8 +49,15 @@ export const useFetchData = <T>({
 			return;
 		}
 
-		fetchData();
-	}, [fetchData, query]);
+		const controller = new AbortController();
+		const signal = controller.signal;
+
+		fetchData(query, signal);
+
+		return () => {
+			controller.abort();
+		};
+	}, [query, formatData, fetchData]);
 
 	return [data, setData, error] as const;
 };
