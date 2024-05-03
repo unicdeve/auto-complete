@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 
-type UseFetchDataType = {
+type UseFetchDataType<T> = {
 	query: string;
 	delay: number;
+	onComplete?: (data?: T) => void;
 };
 
 function mockDelay(ms: number) {
@@ -24,13 +25,18 @@ const mockData: any[] = [
 	},
 ];
 
-export const useFetchData = <T>({ delay, query }: UseFetchDataType) => {
+export const useFetchData = <T>({
+	delay,
+	query,
+	onComplete,
+}: UseFetchDataType<T>) => {
 	const [data, setData] = useState<T | null>(null);
 	const [error, setError] = useState<string | null>('');
 
 	const fetchData = useCallback(async () => {
 		await mockDelay(delay);
 		setData(mockData);
+		onComplete?.(mockData);
 	}, [delay]);
 
 	useEffect(() => {

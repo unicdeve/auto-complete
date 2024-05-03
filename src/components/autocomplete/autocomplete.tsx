@@ -27,15 +27,54 @@ export const Autocomplete = ({
 	labelClassname,
 	debounceDelay = 300,
 }: AutocompleteProps) => {
+	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
+	const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
 	const [data, setData, error] = useFetchData<AutocompleteItem[]>({
 		query,
 		delay: debounceDelay,
+		onComplete: () => {
+			setOpen(true);
+		},
 	});
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setQuery(event.target.value);
+	};
+
+	const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		const key = event.key;
+		if (key === 'Escape') {
+			setOpen(false);
+
+			return;
+		}
+
+		if (key === 'Enter') {
+			if (activeIndex === null) return;
+
+			data && setQuery(data[activeIndex].value);
+			setData(null);
+			setActiveIndex(null);
+
+			return;
+		}
+
+		const dataLenght = data?.length || 0;
+
+		if (!data || dataLenght === 0) return;
+
+		if (key === 'ArrowDown') {
+			if (activeIndex === null || activeIndex === dataLenght - 1) {
+				setActiveIndex(0);
+			} else {
+				setActiveIndex((prev) => (prev !== null ? prev + 1 : prev));
+			}
+		} else if (key === 'ArrowUp') {
+			if (activeIndex === 0) setActiveIndex(dataLenght - 1);
+			else setActiveIndex((prev) => (prev !== null ? prev - 1 : prev));
+		}
 	};
 
 	const onItemSelect = (item: AutocompleteItem) => {
@@ -66,9 +105,14 @@ export const Autocomplete = ({
 		return (
 			<ul className='unicdev-suggestion-container'>
 				{data.map((data, index) => {
+					let isActive = '';
+
+					if (activeIndex !== null && index === activeIndex)
+						isActive = 'unicdev-suggestion-active';
+
 					return (
 						<li
-							className='unicdev-suggestion-item'
+							className={`unicdev-suggestion-item ${isActive}`}
 							key={index}
 							onClick={() => onItemSelect(data)}
 						>
@@ -95,9 +139,10 @@ export const Autocomplete = ({
 					onChange={handleChange}
 					placeholder={placeholder}
 					autoComplete='off'
+					onKeyUp={handleKeyUp}
 				/>
 
-				{data && data.length > 0 ? renderSuggestions() : null}
+				{open ? renderSuggestions() : null}
 			</div>
 		</div>
 	);
