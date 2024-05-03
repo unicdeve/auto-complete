@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import './autocomplete.styles.css';
 import { useFetchData } from '../../hooks/use-fetch-data';
+import { useClickOutside } from '../../hooks/use-click-outside';
 
 export type AutocompleteItem = {
 	label: string;
@@ -129,8 +130,10 @@ export const Autocomplete = ({
 		);
 	};
 
+	const ref = useClickOutside(() => setOpen(false));
+
 	return (
-		<div className='unicdev-auto'>
+		<div className='unicdev-auto' ref={ref}>
 			<label className={`unicdev-auto-label ${labelClassname}`} htmlFor={name}>
 				{label}
 			</label>
