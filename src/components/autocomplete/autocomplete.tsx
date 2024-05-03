@@ -47,7 +47,7 @@ export const Autocomplete = ({
 			return (
 				<ul className='unicdev-suggestion-container'>
 					<li className={`unicdev-suggestion-item unicdev-no-suggestion`}>
-						Error fetching items
+						{error}
 					</li>
 				</ul>
 			);
@@ -68,10 +68,12 @@ export const Autocomplete = ({
 			);
 		}
 
+		const hasData = data && data?.length > 0;
+
 		return (
-			<ul className='unicdev-suggestion-container'>
-				{data &&
-					data.map((data, index) => {
+			hasData && (
+				<ul className='unicdev-suggestion-container'>
+					{data.map((data, index) => {
 						let isActive = '';
 
 						if (activeIndex !== null && index === activeIndex)
@@ -102,7 +104,8 @@ export const Autocomplete = ({
 							</li>
 						);
 					})}
-			</ul>
+				</ul>
+			)
 		);
 	};
 

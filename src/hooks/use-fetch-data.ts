@@ -76,7 +76,6 @@ export const useFetchData = <T>({
 				updateDataCache(cacheKey, query, formattedData);
 			} catch (e) {
 				if (!signal.aborted && e instanceof Error) setError(e.message);
-				setError('There was an error fetching data');
 			} finally {
 				setLoading(false);
 			}
