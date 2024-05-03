@@ -38,7 +38,7 @@ export const Autocomplete = ({
 	});
 
 	const renderSuggestions = () => {
-		if (error) {
+		if (error && !loading) {
 			if (errorMessage)
 				return (
 					<div className='unicdev-suggestion-container'>{errorMessage}</div>
@@ -53,7 +53,7 @@ export const Autocomplete = ({
 			);
 		}
 
-		if (!data || (data && data.length === 0)) {
+		if ((!loading && !data) || (loading && data && data.length === 0)) {
 			if (noDataMessage)
 				return (
 					<div className='unicdev-suggestion-container'>{noDataMessage}</div>
@@ -70,37 +70,38 @@ export const Autocomplete = ({
 
 		return (
 			<ul className='unicdev-suggestion-container'>
-				{data.map((data, index) => {
-					let isActive = '';
+				{data &&
+					data.map((data, index) => {
+						let isActive = '';
 
-					if (activeIndex !== null && index === activeIndex)
-						isActive = 'unicdev-suggestion-active';
+						if (activeIndex !== null && index === activeIndex)
+							isActive = 'unicdev-suggestion-active';
 
-					const parts = data.label.split(new RegExp(`(${query})`, 'gi'));
+						const parts = data.label.split(new RegExp(`(${query})`, 'gi'));
 
-					return (
-						<li
-							className={`unicdev-suggestion-item ${isActive}`}
-							key={index}
-							onClick={() => {
-								onItemSelect(data);
-							}}
-						>
-							{parts.map((part, i) => {
-								if (part.toLowerCase() === query.toLowerCase())
-									return (
-										<strong
-											key={i}
-											style={{ fontWeight: 'bold', color: '#000' }}
-										>
-											{part}
-										</strong>
-									);
-								else return part;
-							})}
-						</li>
-					);
-				})}
+						return (
+							<li
+								className={`unicdev-suggestion-item ${isActive}`}
+								key={index}
+								onClick={() => {
+									onItemSelect(data);
+								}}
+							>
+								{parts.map((part, i) => {
+									if (part.toLowerCase() === query.toLowerCase())
+										return (
+											<strong
+												key={i}
+												style={{ fontWeight: 'bold', color: '#000' }}
+											>
+												{part}
+											</strong>
+										);
+									else return part;
+								})}
+							</li>
+						);
+					})}
 			</ul>
 		);
 	};

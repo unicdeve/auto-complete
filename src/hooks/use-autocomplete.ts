@@ -69,7 +69,6 @@ export const useAutocomplete = ({
 			if (activeIndex === null) return;
 
 			data && setQuery(data[activeIndex].value);
-			setData(null);
 			setActiveIndex(null);
 
 			return;

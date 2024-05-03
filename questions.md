@@ -257,3 +257,19 @@ I have had to do this previous in some legacy codebase, here are my steps:
 - Update props usage
 - Wrap component in memo if it's using PureComponent
 - Test and Debug
+
+### 10. List a few ways styles can be used with components.
+
+- Inline styles
+- CSS class names: Pure CSS or Tailwind class names
+- CSS Modules: this prevents global namespace conflicts
+- CSS-in-JS: Styled-components, Emotion
+
+### 11. How to render an HTML string coming from the server.
+
+We can use the `dangerouslySetInnerHTML` prop.
+
+```javascript
+const htmlString = `<h1>Some html string<h1/>`;
+return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+```

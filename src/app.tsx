@@ -18,7 +18,7 @@ function App() {
 				padding: 40,
 			}}
 		>
-			<h1 className='text-4xl font-black'>Auto complete component</h1>
+			<h1 className='text-4xl font-black'>Autocomplete</h1>
 
 			<Autocomplete
 				label='Countries'
