@@ -36,6 +36,7 @@ export const Autocomplete = ({
 	labelClassname,
 	formatData,
 	debounceDelay = 300,
+	dataSource,
 	errorMessage,
 	noDataMessage,
 }: AutocompleteProps) => {
@@ -43,7 +44,8 @@ export const Autocomplete = ({
 	const [query, setQuery] = useState('');
 	const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-	const [data, setData, error] = useFetchData<AutocompleteItem[]>({
+	const [data, setData, error] = useFetchData<AutocompleteItem>({
+		dataSource,
 		query,
 		formatData,
 		delay: debounceDelay,
