@@ -55,6 +55,7 @@ export const Autocomplete = ({
 		dataSource,
 		debounceDelay,
 		formatData,
+		cacheKey: name,
 	});
 
 	const renderSuggestions = () => {

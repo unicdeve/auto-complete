@@ -10,12 +10,15 @@ import {
 type UseAutocompleteType = Pick<
 	AutocompleteProps,
 	'dataSource' | 'formatData' | 'debounceDelay'
->;
+> & {
+	cacheKey: string;
+};
 
 export const useAutocomplete = ({
 	dataSource,
 	formatData,
 	debounceDelay = 300,
+	cacheKey,
 }: UseAutocompleteType) => {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
@@ -31,10 +34,12 @@ export const useAutocomplete = ({
 		onComplete: () => {
 			setOpen(true);
 		},
+		cacheKey,
 	});
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setQuery(event.target.value);
+		const value = event.target.value;
+		setQuery(value);
 	};
 
 	const handleBlur = () => {
@@ -43,7 +48,7 @@ export const useAutocomplete = ({
 
 	const handleFocus = () => {
 		if (!query) {
-			const recentQueries = fetchRecentQueries<AutocompleteItem[]>();
+			const recentQueries = fetchRecentQueries<AutocompleteItem[]>(cacheKey);
 			setData(recentQueries);
 		}
 
@@ -73,12 +78,14 @@ export const useAutocomplete = ({
 		if (!data || dataLenght === 0) return;
 
 		if (key === 'ArrowDown') {
+			// moving down
 			if (activeIndex === null || activeIndex === dataLenght - 1) {
 				setActiveIndex(0);
 			} else {
 				setActiveIndex((prev) => (prev !== null ? prev + 1 : prev));
 			}
 		} else if (key === 'ArrowUp') {
+			// moving up
 			if (activeIndex === 0) setActiveIndex(dataLenght - 1);
 			else setActiveIndex((prev) => (prev !== null ? prev - 1 : prev));
 		}
@@ -86,6 +93,7 @@ export const useAutocomplete = ({
 
 	const onItemSelect = (item: AutocompleteItem) => {
 		setQuery(item.value);
+		setOpen(false);
 	};
 
 	return {

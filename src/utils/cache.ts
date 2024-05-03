@@ -2,10 +2,17 @@
 // Write logic for pruning the cache periodically
 const DATA_CACHE_KEY = 'autocompletes';
 
-export const updateDataCache = <T>(query: string, data: T) => {
+const getCacheKey = (cacheKey: string) => `${DATA_CACHE_KEY}:${cacheKey}`;
+
+export const updateDataCache = <T>(
+	cacheKey: string,
+	query: string,
+	data: T
+) => {
+	const key = getCacheKey(cacheKey);
 	let cache;
-	if (localStorage.getItem(DATA_CACHE_KEY)) {
-		cache = JSON.parse(localStorage.getItem(DATA_CACHE_KEY) || '{}');
+	if (localStorage.getItem(key)) {
+		cache = JSON.parse(localStorage.getItem(key) || '{}');
 
 		cache[query] = data;
 	} else {
@@ -14,20 +21,21 @@ export const updateDataCache = <T>(query: string, data: T) => {
 		};
 	}
 
-	localStorage.setItem(DATA_CACHE_KEY, JSON.stringify(cache));
+	localStorage.setItem(key, JSON.stringify(cache));
 };
 
-export const getDataCache = <T>() => {
+export const getDataCache = <T>(cacheKey: string) => {
+	const key = getCacheKey(cacheKey);
 	let cache: Record<string, T> = {};
-	if (localStorage.getItem(DATA_CACHE_KEY)) {
-		cache = JSON.parse(localStorage.getItem(DATA_CACHE_KEY) || '{}');
+	if (localStorage.getItem(getCacheKey(cacheKey))) {
+		cache = JSON.parse(localStorage.getItem(key) || '{}');
 	}
 
 	return cache;
 };
 
-export const fetchRecentQueries = <T>() => {
-	const cache = getDataCache<T>();
+export const fetchRecentQueries = <T>(cacheKey: string) => {
+	const cache = getDataCache<T>(cacheKey);
 
 	const flattenedArray = Object.values(cache).flat();
 

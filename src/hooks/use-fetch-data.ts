@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDebounce } from './use-dounce';
-import { getDataCache, updateDataCache } from '../utils/cache';
+import {
+	fetchRecentQueries,
+	getDataCache,
+	updateDataCache,
+} from '../utils/cache';
 
 type UseFetchDataType<T> = {
 	query: string;
@@ -10,6 +14,7 @@ type UseFetchDataType<T> = {
 	dataSource: {
 		getUrl: (query: string) => string;
 	};
+	cacheKey: string;
 };
 
 export const useFetchData = <T>({
@@ -18,6 +23,7 @@ export const useFetchData = <T>({
 	delay,
 	onComplete,
 	dataSource,
+	cacheKey,
 }: UseFetchDataType<T>) => {
 	const [data, setData] = useState<T[] | null>(null);
 	const [error, setError] = useState<string | null>('');
@@ -27,10 +33,17 @@ export const useFetchData = <T>({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const fetchData = useCallback(
 		debounce(async (query, signal) => {
-			const cache = getDataCache<T[]>();
+			const cache = getDataCache<T[]>(cacheKey);
 
 			if (cache[query]?.length > 0) {
 				setData(cache[query]);
+				return;
+			}
+
+			if (query === '') {
+				const recentQueries = fetchRecentQueries<T[]>(cacheKey);
+				setData(recentQueries);
+
 				return;
 			}
 
@@ -44,7 +57,7 @@ export const useFetchData = <T>({
 				onComplete?.(formattedData);
 
 				// caching is really had, using a library like tanstack-query would have been great
-				updateDataCache(query, formattedData);
+				updateDataCache(cacheKey, query, formattedData);
 			} catch (e) {
 				if (!signal.aborted && e instanceof Error) setError(e.message);
 				console.log(e);
@@ -54,13 +67,6 @@ export const useFetchData = <T>({
 	);
 
 	useEffect(() => {
-		if (!query) {
-			setData(null);
-			setError(null);
-
-			return;
-		}
-
 		const controller = new AbortController();
 		const signal = controller.signal;
 
