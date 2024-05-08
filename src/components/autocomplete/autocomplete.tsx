@@ -38,6 +38,10 @@ export const Autocomplete = ({
 	});
 
 	const renderSuggestions = () => {
+		if (!query && !data) {
+			return;
+		}
+
 		if (error && !loading) {
 			if (errorMessage)
 				return (
@@ -53,7 +57,7 @@ export const Autocomplete = ({
 			);
 		}
 
-		if ((!loading && !data) || (loading && data && data.length === 0)) {
+		if (!loading && !data) {
 			if (noDataMessage)
 				return (
 					<div className='unicdev-suggestion-container'>{noDataMessage}</div>
@@ -70,8 +74,8 @@ export const Autocomplete = ({
 
 		const hasData = data && data?.length > 0;
 
-		return (
-			hasData && (
+		if (hasData) {
+			return (
 				<ul className='unicdev-suggestion-container'>
 					{data.map((data, index) => {
 						let isActive = '';
@@ -105,8 +109,8 @@ export const Autocomplete = ({
 						);
 					})}
 				</ul>
-			)
-		);
+			);
+		}
 	};
 
 	return (
