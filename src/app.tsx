@@ -13,28 +13,29 @@ const formatData = (data: CountryType[]) => {
 
 function App() {
 	return (
-		<div
-			style={{
-				padding: 40,
-			}}
-		>
-			<h1>Autocomplete</h1>
+		<main style={{ padding: 40 }}>
+			<header>
+				<h1>Autocomplete</h1>
+			</header>
 
-			<Autocomplete
-				label='Countries'
-				placeholder='Search for countries'
-				name='fakeNames'
-				formatData={formatData}
-				dataSource={{
-					getUrl: (query) =>
-						`https://restcountries.com/v3.1/name/${query}?fields=name`,
-				}}
-			/>
+			<section>
+				<Autocomplete
+					label='Countries'
+					placeholder='Search for countries'
+					name='fakeNames'
+					formatData={formatData}
+					dataSource={{
+						getUrl: (query) =>
+							`https://restcountries.com/v3.1/name/${query}?fields=name`,
+					}}
+				/>
 
-			<p>
-				More item to demostrate no layout shift when the suggestion list is open
-			</p>
-		</div>
+				<p>
+					More items to demonstrate no layout shift when the suggestion list is
+					open.
+				</p>
+			</section>
+		</main>
 	);
 }
 
